@@ -1,0 +1,66 @@
+title       = Steered MD
+
+; Run parameters
+integrator  = sd
+dt          = 0.002
+tinit       = 0
+nsteps      = 50000000    ; 100,000 ps = 100 ns
+
+; Output parameters
+nstxout-compressed = 1000 
+compressed-x-grps  = non-Water
+nstlog             = 1000
+nstvout            = 1000 
+nstfout            = 1000
+nstenergy          = 1000
+
+; Bond parameters
+continuation            = yes       ; continuation from the NPT equib run
+constraint_algorithm    = lincs     ; holonomic constraints
+constraints             = h-bonds   ; bonds involving H are constrained
+lincs_iter              = 1         ; accuracy of LINCS
+lincs_order             = 4         ; also related to accuracy
+
+; Single-range cutoff scheme
+cutoff-scheme   = Verlet
+nstlist         = 10 
+ns_type         = grid 
+rlist           = 1.0
+rcoulomb        = 1.0
+rvdw            = 1.0
+
+; Electrostatics
+coulombtype     = PME
+fourierspacing  = 0.16      ; grid spacing for FFT
+pme-order       = 4         ; cubic interpolation
+ewald-rtol      = 1e-5      ; relative strength of the ele. int. at the cutoff
+
+; Temperature coupling is on
+tc-grps                 = Protein Non-Protein   ; two coupling groups - more accurate
+tau_t                   = 2.0     2.0           ; time constant, in ps
+ref_t                   = 300     300           ; reference temperature, one for each group, in K
+ld-seed                 = -1                    ; used to initialize random generator for thermal noise for stochastic and Brownian dynamics
+
+;---Generate velocities is off
+gen_vel  = no 
+
+;---Periodic boundary conditions are on in all directions
+pbc      = xyz
+
+;---Long-range dispersion correction
+DispCorr = EnerPres
+
+;---Pull code---
+pull                    = yes
+pull-nstxout            = 1
+pull-nstfout            = 1
+pull_ncoords            = 1         ; only one reaction coordinate 
+pull_ngroups            = 2         ; two groups defining one reaction coordinate 
+pull_group1_name        = interface
+pull_group2_name        = binder
+pull_coord1_type        = constant-force
+pull_coord1_geometry    = distance        ; simple distance increase 
+pull_coord1_dim         = Y N N 
+pull_coord1_groups      = 1 2
+pull_coord1_start       = yes          ; define initial COM distance > 0
+pull_coord1_k           = -FORCE       ; pN

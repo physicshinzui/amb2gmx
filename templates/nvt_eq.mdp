@@ -1,0 +1,51 @@
+title                   =  NVTeqilibrium
+define                  = -DPOSRES  ; position restrain the protein
+
+; Run parameters
+integrator              = sd        
+nsteps                  = 50000     ; 2 * 50000 = 100 ps
+dt                      = 0.002     ; 2 fs
+
+; Output control
+nstxout-compressed = 50000
+compressed-x-grps  = System
+nstlog             = 50000
+
+; Bond parameters
+continuation            = no        ; first dynamics run
+constraint_algorithm    = lincs     ; holonomic constraints
+constraints             = h-bonds   ; bonds involving H are constrained
+lincs_iter              = 1         ; accuracy of LINCS
+lincs_order             = 4         ; also related to accuracy
+
+; Nonbonded settings
+cutoff-scheme           = Verlet    ; Buffered neighbor searching
+ns_type                 = grid      ; search neighboring grid cells
+nstlist                 = 10        ; 20 fs, largely irrelevant with Verlet
+rcoulomb                = 1.0       ; short-range electrostatic cutoff (in nm)
+rvdw                    = 1.0       ; short-range van der Waals cutoff (in nm)
+DispCorr                = EnerPres  ; account for cut-off vdW scheme
+
+; Electrostatics
+coulombtype     = PME
+fourierspacing  = 0.16      ; grid spacing for FFT
+pme-order       = 4         ; cubic interpolation
+ewald-rtol      = 1e-5      ; relative strength of the ele. int. at the cutoff
+rlist           = 1.0
+
+; Temperature coupling is on
+tc-grps                 = Protein Non-Protein   ; two coupling groups - more accurate
+tau_t                   = 2.0     2.0           ; time constant, in ps
+ref_t                   = 300     300           ; reference temperature, one for each group, in K
+ld-seed                 = -1                    ; used to initialize random generator for thermal noise for stochastic and Brownian dynamics
+
+; Pressure coupling is off
+pcoupl                  = no        ; no pressure coupling in NVT
+
+; Periodic boundary conditions
+pbc                     = xyz       ; 3-D PBC
+
+; Velocity generation
+gen_vel                 = yes       ; assign velocities from Maxwell distribution
+gen_temp                = 300       ; temperature for Maxwell distribution
+gen_seed                = #{RAND}   ; generate a random seed

@@ -1,0 +1,13 @@
+source leaprc.protein.#{FF}
+source leaprc.water.tip3p
+
+mol  = loadpdb pdb4amber.pdb
+
+#{SSBONDS}
+
+solvateBox mol TIP3PBOX 5.0  # This is set but a box will be set again later on via gmx solvate
+addions mol Na+ 1  # Note that only one Na+ and one Cl- are added. 
+addions mol Cl- 1  # This is done so that their topology parameters are writtein in system.top. The number of ions will be estimated correctly by gmx geninon in a later process.       
+saveamberparm mol system.prmtop system.inpcrd
+savePDB mol system.pdb
+quit 
