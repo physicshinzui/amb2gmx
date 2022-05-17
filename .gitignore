@@ -1,1 +1,7 @@
 .DS_Store
+/log*
+*pdb
+system*
+*#
+*.log
+*.bak
