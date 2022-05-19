@@ -40,7 +40,7 @@ mkdir -p log.tleap ; mv tleap* log.tleap
 acpype -p system.prmtop -x system.inpcrd -b system
 # NOTE: This generates `system.amb2gmx` directory
 
-# === (4) Keep Protein only
+# === (4) Keep Protein and Ions only
 cp -p system.amb2gmx/system_GMX.gro system.gro
 cp -p system.amb2gmx/system_GMX.top system.top
 
@@ -75,7 +75,11 @@ echo Protein | gmx editconf -f system.gro -o box.gro -princ -bt dodecahedron -d 
 #gmx insert-molecules -f pdb4amber.pdb -ci cosolv.pdb -o pdb4amber.pdb -nmol $nmol -scale 3
 
 gmx solvate -cp box.gro -cs spc216.gro -o mol_solv.gro -p system.top
-vim system.top
+
+python src/change_water_atmname.py system.top
+cp -p system.top system.top.bak
+mv modified.top system.top
+
 gmx grompp -f templates/ions.mdp -c mol_solv.gro -p system.top -o ions.tpr 
 echo SOL | gmx genion -s ions.tpr -o mol_solv_ions.gro -p system.top -pname NA+ -nname CL- -neutral
 
