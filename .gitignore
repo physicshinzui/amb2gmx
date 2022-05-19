@@ -13,3 +13,4 @@ system*
 *.swp
 *.itp
 *.tpr
+*.amb2gmx
