@@ -58,15 +58,14 @@ gsed -i "${iloc} i #ifdef POSRES\n#include \"${posres_itp}\"\n#endif\n" system.t
 # This is GNU sed installed by Homebrew on mac. If you are in a linux, replace gsed with sed
 
 # === (7) Build a system by gmx.
-echo Protein | gmx editconf -f system.gro -o box.gro -princ -bt dodecahedron -d 1.0
+echo Protein | gmx editconf -f system.gro -o box.gro -princ -bt cubic -d 1.5
 
 ## === (7.1) insert molecule for cosolvent MD: 
-#gmx editconf -f pdb4amber.pdb -o pdb4amber.pdb -d 1.5 -bt cubic
-#nmol=10
-#gmx insert-molecules -f pdb4amber.pdb -ci cosolv.pdb -o pdb4amber.pdb -nmol $nmol -scale 3
+nmol=10
+gmx insert-molecules -f box.gro -ci ligand.amb2gmx/ligand_GMX.gro -o box_inserted.gro -nmol $nmol -scale 3
 
 # === (7.2) Solvate
-gmx solvate -cp box.gro -cs spc216.gro -o mol_solv.gro -p system.top
+gmx solvate -cp box_inserted.gro -cs spc216.gro -o mol_solv.gro -p system.top
 
 ## == (7.3) Rename gromacs default atom names of water molecule to those of Amber's
 python src/change_water_atmname.py system.top
