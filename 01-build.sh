@@ -22,8 +22,14 @@ tleap -f tleap.in
 mkdir -p log.tleap ; mv tleap* log.tleap
 
 # === (3) acpype: Convertion of Amber to Gromacs topology file
+
+## ===(3.1) For protein
 acpype -p system.prmtop -x system.inpcrd -b system
 # NOTE: This generates `system.amb2gmx` directory
+
+## ==(3.2) For ligand or cosolvent
+ligdir=lig
+acpype -p $ligdir/ligand.parm7 -x $ligdir/ligand.rst7 -b ligand
 
 # === (4) Keep Protein and Ions only
 cp -p system.amb2gmx/system_GMX.gro system.gro
