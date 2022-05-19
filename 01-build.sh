@@ -59,12 +59,15 @@ echo Protein | gmx editconf -f system.gro -o box.gro -princ -bt dodecahedron -d 
 #nmol=10
 #gmx insert-molecules -f pdb4amber.pdb -ci cosolv.pdb -o pdb4amber.pdb -nmol $nmol -scale 3
 
+# === (7.2) Solvate
 gmx solvate -cp box.gro -cs spc216.gro -o mol_solv.gro -p system.top
 
+## == (7.3) Rename gromacs default atom names of water molecule to those of Amber's
 python src/change_water_atmname.py system.top
 cp -p system.top system.top.bak
 mv modified.top system.top
 
+## ==(7.4) Add ions
 gmx grompp -f templates/ions.mdp -c mol_solv.gro -p system.top -o ions.tpr 
 echo SOL | gmx genion -s ions.tpr -o mol_solv_ions.gro -p system.top -pname NA+ -nname CL- -neutral
 
