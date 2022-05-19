@@ -5,3 +5,11 @@ system*
 *#
 *.log
 *.bak
+*gro
+*top
+#*
+*mdp
+#*
+*.swp
+*.itp
+*.tpr
