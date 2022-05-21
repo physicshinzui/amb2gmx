@@ -1,1 +1,1 @@
-/atomtypeskdgg/systemdG:w new.itp:q!
+/moleculetypekdgg/systemdG:wq! new.itp
