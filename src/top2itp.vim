@@ -1,1 +1,1 @@
-/moleculetypekdgg/systemdG:wq! new.itp
+/moleculetypekdgg/systemdG:wq! ligand.itp
