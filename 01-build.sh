@@ -84,7 +84,7 @@ mv modified.top system.top
 
 ## ==(7.4) Add ions
 read -p "How many warnings are allowd?" nwarns
-gmx grompp -f templates/ions.mdp -c mol_solv.gro -p system.top -o ions.tpr -maxwarn nwarns
+gmx grompp -f templates/ions.mdp -c mol_solv.gro -p system.top -o ions.tpr -maxwarn $nwarns
 echo SOL | gmx genion -s ions.tpr -o mol_solv_ions.gro -p system.top -pname NA+ -nname CL- -neutral
 
 bash trash.sh
