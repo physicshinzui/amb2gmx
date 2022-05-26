@@ -8,6 +8,6 @@ $GMX grompp -f templates/em.mdp \
             -o em \
             -p system.top \
             -r mol_solv_ions.gro \
-            -maxwarn 1
+            -maxwarn 7
 
 $GMX mdrun -v -deffnm em # -ntmpi 1 -ntomp 40 #>& em.job
