@@ -64,8 +64,18 @@ echo Protein | gmx editconf -f system.gro -o box.gro -princ -bt cubic -d 1.5
 nmol=10
 gmx insert-molecules -f box.gro -ci ligand.amb2gmx/ligand_GMX.gro -o box_inserted.gro -nmol $nmol -scale 3
 
-# === (7.2) Solvate
+## === (7.2) Solvate
 gmx solvate -cp box_inserted.gro -cs spc216.gro -o mol_solv.gro -p system.top
+
+## === (7.3) Merge topologies: protein and ligand
+# TODO: This part is hard coded and mannually done. I want to automate here.  
+vim -s src/get_atomtype.vim ligand.amb2gmx/ligand_GMX.top # -> ligand.itp generated
+vim -s src/top2itp.vim      ligand.amb2gmx/ligand_GMX.top # -> atomtype.txt generated
+echo "=============================================================================================="
+echo "| Manually Insertion of ligand topology files (ligand.itp and atomtype.txt)... Go on? [Enter]|"
+echo "=============================================================================================="
+read 
+vim system.top
 
 ## == (7.3) Rename gromacs default atom names of water molecule to those of Amber's
 python src/change_water_atmname.py system.top
@@ -73,7 +83,19 @@ cp -p system.top system.top.bak
 mv modified.top system.top
 
 ## ==(7.4) Add ions
-gmx grompp -f templates/ions.mdp -c mol_solv.gro -p system.top -o ions.tpr 
+read -p "How many warnings are allowd?" nwarns
+gmx grompp -f templates/ions.mdp -c mol_solv.gro -p system.top -o ions.tpr -maxwarn nwarns
 echo SOL | gmx genion -s ions.tpr -o mol_solv_ions.gro -p system.top -pname NA+ -nname CL- -neutral
 
 bash trash.sh
+
+cat <<EOF
+=================================
+Note: 
+You may see a few warnings, this is because redundant atom types for the ligand given.
+There are two ways: 
+    i. set -maxwarn n 
+    ii. remove the redandant atom types from system.top.
+==================================
+EOF
+
