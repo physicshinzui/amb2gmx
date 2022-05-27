@@ -7,3 +7,4 @@ rm -rf pdb4amber.log
 rm selection.txt 
 rm index.ndx
 rm -rf log.*
+rm atomtype.txt
