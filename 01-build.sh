@@ -29,8 +29,8 @@ acpype -p system.prmtop -x system.inpcrd -b system
 # NOTE: This generates `system.amb2gmx` directory
 
 ## ==(3.2) For ligand or cosolvent
-ligdir=lig
-acpype -p $ligdir/ligand.parm7 -x $ligdir/ligand.rst7 -b ligand
+#ligdir=lig
+#acpype -p $ligdir/ligand.parm7 -x $ligdir/ligand.rst7 -b ligand
 
 # === (4) Keep Protein and Ions only
 cp -p system.amb2gmx/system_GMX.gro system.gro
@@ -62,16 +62,18 @@ gsed -i "${iloc} i #ifdef POSRES\n#include \"${posres_itp}\"\n#endif\n" system.t
 echo Protein | ${GMX} editconf -f system.gro -o box.gro -princ -bt cubic -d 1.5
 
 ## === (7.1) insert molecule for cosolvent MD: 
+lig_crd=lig/em.gro
 nmol=10
-${GMX} insert-molecules -f box.gro -ci ligand.amb2gmx/ligand_GMX.gro -o box_inserted.gro -nmol $nmol -scale 3
+${GMX} insert-molecules -f box.gro -ci $lig_crd -o box_inserted.gro -nmol $nmol -scale 3
 
 ## === (7.2) Solvate
 ${GMX} solvate -cp box_inserted.gro -cs spc216.gro -o mol_solv.gro -p system.top
 
 ## === (7.3) Merge topologies: protein and ligand
 # TODO: This part is hard coded and mannually done. I want to automate here.  
-vim -s src/get_atomtype.vim ligand.amb2gmx/ligand_GMX.top # -> ligand.itp generated
-vim -s src/top2itp.vim      ligand.amb2gmx/ligand_GMX.top # -> atomtype.txt generated
+lig_top=lig/hs_GMX.top
+vim -s src/get_atomtype.vim $lig_top # -> ligand.itp generated
+vim -s src/top2itp.vim      $lig_top # -> atomtype.txt generated
 echo "=============================================================================================="
 echo "| Manually Insertion of ligand topology files (ligand.itp and atomtype.txt)... Go on? [Enter]|"
 echo "=============================================================================================="
